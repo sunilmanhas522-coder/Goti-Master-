@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goti Master - Twelve Beads</title>
+    <style>
+        body { background-color: #331a00; color: #ffcc00; font-family: 'Serif', sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .board { display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(5, 60px); gap: 10px; justify-content: center; background: #5c3317; padding: 20px; border-radius: 15px; margin: 20px auto; width: fit-content; border: 5px solid #8b4513; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .cell { width: 60px; height: 60px; background: #8b4513; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .bead { width: 45px; height: 45px; border-radius: 50%; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); }
+        .red { background: radial-gradient(circle at 30% 30%, #ff4d4d, #800000); }
+        .blue { background: radial-gradient(circle at 30% 30%, #4d4dff, #000080); }
+        .selected { border: 3px solid white; box-shadow: 0 0 15px white; }
+        .highlight { background: rgba(255, 255, 255, 0.3); }
+        .status { font-size: 24px; margin-bottom: 10px; font-weight: bold; }
+        button { background: #ffcc00; color: #331a00; border: none; padding: 10px 20px; font-size: 18px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Goti Master</h1>
+    <div class="status" id="status">Red's Turn</div>
+    <div class="board" id="board"></div>
+    <button onclick="location.reload()">Reset Game</button>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+        let board = Array(25).fill(null);
+        let selectedIndex = null;
+        let turn = 'red';
+
+        // Initial setup for Twelve Beads (Simplified)
+        for(let i=0; i<12; i++) board[i] = 'red';
+        for(let i=13; i<25; i++) board[i] = 'blue';
+
+        function createBoard() {
+            boardElement.innerHTML = '';
+            board.forEach((cell, i) => {
+                const div = document.createElement('div');
+                div.className = 'cell';
+                if (cell) {
+                    const bead = document.createElement('div');
+                    bead.className = `bead ${cell} ${selectedIndex === i ? 'selected' : ''}`;
+                    div.appendChild(bead);
+                }
+                div.onclick = () => handleClick(i);
+                boardElement.appendChild(div);
+            });
+        }
+
+        function handleClick(i) {
+            if (board[i] === turn) {
+                selectedIndex = i;
+            } else if (selectedIndex !== null && board[i] === null) {
+                // Basic move logic
+                board[i] = turn;
+                board[selectedIndex] = null;
+                selectedIndex = null;
+                turn = turn === 'red' ? 'blue' : 'red';
+                statusElement.innerText = `${turn.charAt(0).toUpperCase() + turn.slice(1)}'s Turn`;
+            }
+            createBoard();
+        }
+        createBoard();
+    </script>
+</body>
+</html>
